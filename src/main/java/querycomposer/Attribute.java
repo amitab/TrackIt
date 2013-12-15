@@ -32,7 +32,6 @@ public class Attribute {
 	public static final int OP_BETWEEN = 14;
 	
 	
-	private String attribute = null;
 	private String attributeName = null;
 	private java.lang.Class<?> attributeClass = null;
 	private java.lang.reflect.Field attributeField = null;
@@ -45,26 +44,9 @@ public class Attribute {
 	
 	private String where = "";
 	private String from = "";
-	private String dateFormat = null;
 	
-	public static boolean isNotAnEntity(java.lang.Class<?> attributeClass) {
-		boolean decision = false;
-		
-		Set<java.lang.Class<?>> wrapper = new HashSet<java.lang.Class<?>>();
-		wrapper.add(Boolean.class);
-		wrapper.add(Character.class);
-		wrapper.add(Byte.class);
-		wrapper.add(Short.class);
-		wrapper.add(Integer.class);
-		wrapper.add(Long.class);
-		wrapper.add(Float.class);
-		wrapper.add(Double.class);
-		wrapper.add(Void.class);
-        
-        if(wrapper.contains(attributeClass) || attributeClass.isPrimitive()) decision = true;
-		
-		return decision;
-	}
+	// Date specific
+	private String dateFormat = null;
 	
 	// Constructors
 	
@@ -90,6 +72,13 @@ public class Attribute {
 		this.foreignKey = false;
 		this.operation = operation;
 	}
+
+	public Attribute(String attributeName, int operation) {
+		this.attributeName = attributeName;
+		this.query = null;
+		this.foreignKey = false;
+		this.operation = operation;
+	}
 	
 	// Static Instantiators
 	
@@ -104,16 +93,12 @@ public class Attribute {
 	public static Attribute newInstance(String attributeName, String query, int operation) {
 		return new Attribute(attributeName, query, operation);
 	}
+
+	public static Attribute newInstance(String attributeName, int operation) {
+		return new Attribute(attributeName, operation);
+	}
 	
 	// Getters and Setters
-	
-	public String getAttribute() {
-		return attribute;
-	}
-
-	public void setAttribute(String attribute) {
-		this.attribute = attribute;
-	}
 
 	public String getAttributeName() {
 		return attributeName;
@@ -177,7 +162,7 @@ public class Attribute {
 
 	public void setAttributeList(Set<Attribute> attributeList) throws QueryComposerException {
 		if(!this.foreignKey) {
-			throw new QueryComposerException("The attribute '" + attributeName + "' cannot have more attributes joined to it.");
+			throw new QueryComposerException("The attribute '" + attributeName + "' cannot have attributes joined to it.");
 		}
 		this.attributeList = attributeList;
 	}
@@ -260,23 +245,46 @@ public class Attribute {
 	
 	private void processQuery() throws QueryComposerException {
 		try {
+			
+			if(operation == OP_NOT_NULL || operation == OP_NULL || operation == OP_EMPTY || operation == OP_NOT_EMPTY) {
+				if(query != null) {
+					throw new QueryComposerException("Operation " + operation + " can't have arguments.");
+				} else return;
+			}
+			
 			List<Object> dataObjects = new ArrayList<Object>();
 			String[] splitString = (query.split(","));
 			
 			if(splitString.length == 1) {
+
+				if(operation == OP_BETWEEN ) {
+					throw new QueryComposerException("Operation " + operation + " must have 2 arguments.");
+				}
+				
 				value = ConversionUtil.convertIfNeeded(splitString[0], attributeClass);
-				if(attributeClass.equals(Date.class))
-					dateFormat = ConversionUtil.getRecentParse();
-				return;
+				
+			} else {
+				
+				if(operation != OP_IN || operation != OP_NOT_IN || operation != OP_BETWEEN ) {
+					throw new QueryComposerException("Operation " + operation + " must have only 1 argument.");
+				}
+				
+				if(operation == OP_BETWEEN ) {
+					throw new QueryComposerException("Operation " + operation + " must have 2 arguments.");
+				}
+				
+				for(String string : splitString) {
+					Object data = string.trim();
+					data = ConversionUtil.convertIfNeeded(data, attributeClass);
+					dataObjects.add(data);
+				}
+				
+				value = dataObjects;
 			}
-			for(String string : splitString) {
-				Object data = string.trim();
-				data = ConversionUtil.convertIfNeeded(data, attributeClass);
-				if(attributeClass.equals(Date.class))
-					dateFormat = ConversionUtil.getRecentParse();
-				dataObjects.add(data);
-			}
-			value = dataObjects;
+			
+			// If there was a date conversion, get the format
+			if(attributeClass.equals(Date.class))
+				dateFormat = ConversionUtil.getRecentParseFormat();
 			
 		} catch (Exception e) {
 			throw new QueryComposerException("The query '" + query + "' could not be parsed : " + e.getMessage());
@@ -358,8 +366,10 @@ public class Attribute {
 				break;
 			}
 			
-			if(attributeClass.equals(Date.class) && dateFormat!=null)
+			if(attributeClass.equals(Date.class) && dateFormat!=null) {
 				where = where.replaceFirst(rootName + "." + attributeName, "date_format(" + rootName + "." + attributeName + ", '" + dateFormat + "')");
+				dateFormat = null;
+			}
 			
 			root.appendWhere(where);
 			

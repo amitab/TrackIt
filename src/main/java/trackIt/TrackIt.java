@@ -10,7 +10,7 @@ import querycomposer.Attribute;
 import querycomposer.QueryComposerException;
 import querycomposer.Root;
 
-public class NewsCaster {
+public class TrackIt {
 	
 	public static void queryTest() throws QueryComposerException {
 		HibernateUtil.openSession();
@@ -30,22 +30,43 @@ public class NewsCaster {
 	public static void main(String[] args) {
 		try {
 
-			HibernateUtil.openSession();
+			//HibernateUtil.openSession();
 			Root r = new Root("Staff");
 			r.addAttributes(
 				Attribute.newInstance("dateOfBirth", "05-2005")
 			);
+
+			System.out.println(r.generateHql() + "\n");
 			
-			Query query = r.prepareQuery();
+			r = new Root("Staff");
+			r.addAttributes(
+				Attribute.newInstance("salary", "10000"),
+				Attribute.newInstance("presentationList").addAttributes(
+						Attribute.newInstance("presentationName", Attribute.OP_NOT_EMPTY)
+				)
+			);
+			
+			System.out.println(r.generateHql());
+
+			r = new Root("Staff");
+			r.addAttributes(
+				Attribute.newInstance("dateOfBirth", "january")
+			);
+			
+			System.out.println(r.generateHql());
+			
+			/*Query query = r.prepareQuery();
 			List<Staff> list = query.list();
 			
 			for(Staff s : list) {
 				System.out.println(s.getStaffId() + ". " + s.getFirstName());
-			}
+			}*/
 			
 		} catch (Exception e) {
 			System.out.println("Error : " + e.getMessage());
 			e.printStackTrace();
+		} finally {
+			//HibernateUtil.closeSession();
 		}
 	}
 

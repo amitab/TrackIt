@@ -18,24 +18,21 @@ public class HibernateUtil {
 	}
 	
 	public static Session getSession() throws HibernateException {
-		if(session == null) {
-			openSession();
-		}
-		return session;
+		return getSessionFactory().getCurrentSession();
 	}
 	
-	protected static void startTransaction() throws HibernateException {
+	public static void startTransaction() throws HibernateException {
 		transaction = session.beginTransaction();
 		transaction.setTimeout(5);
 	}
 	
-	protected static void commitTransaction() throws HibernateException {
+	public static void commitTransaction() throws HibernateException {
 		if(transaction != null) {
 			transaction.commit();
 		}
 	}
 	
-	protected static void rollBackTransaction() throws HibernateException {
+	public static void rollBackTransaction() throws HibernateException {
 		if(transaction != null) {
 			transaction.rollback();
 		}

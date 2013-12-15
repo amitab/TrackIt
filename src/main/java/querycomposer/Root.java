@@ -8,7 +8,6 @@ import org.hibernate.Query;
 import dao.HibernateUtil;
 
 public class Root {
-	private String root;
 	private String rootName;
 	private java.lang.Class<?> rootClass;
 	private Set<Attribute> attributeList = new HashSet<Attribute>();
@@ -36,14 +35,6 @@ public class Root {
 	}
 	
 	// Setters and Getters
-
-	public String getroot() {
-		return root;
-	}
-
-	public void setroot(String root) {
-		this.root = root;
-	}
 
 	public String getrootName() {
 		return rootName;

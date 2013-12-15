@@ -16,9 +16,9 @@ public class ConversionUtil {
         "yyyy",
     };
 	
-	private static String info = "";
+	private static String dateFormat = "";
 	
-	public static Object parse(String d) throws Exception {
+	public static Object parseDate(String d) throws Exception {
 		Date date;
 		if (d != null) {
 		    for (String parse : formats) {
@@ -32,31 +32,31 @@ public class ConversionUtil {
 		            
 		            switch(parse) {
 		            	case "MMMM":
-		            		info = "%m";
+		            		dateFormat = "%m";
 		            		month = cal.get(Calendar.MONTH) + 1;
 		            		return month < 10? "0" + Integer.toString(month) : Integer.toString(month);
 		            		
 		            	case "yyyy":
-		            		info = "%Y";
+		            		dateFormat = "%Y";
 		            		year = cal.get(Calendar.YEAR);
 		            		return Integer.toString(year);
 		            		
 		            	case "MMMM yyyy":
-		            		info = "%m-%Y";
+		            		dateFormat = "%m-%Y";
 		            		
 		            		month = cal.get(Calendar.MONTH) + 1;
 		            		year = cal.get(Calendar.YEAR);
 		            		return month < 10? "0" + Integer.toString(month) + "-" + Integer.toString(year) : Integer.toString(month) + "-" + Integer.toString(year);
 		            	
 		            	case "MM-yyyy":
-		            		info = "%m-%Y";
+		            		dateFormat = "%m-%Y";
 		            		
 		            		month = cal.get(Calendar.MONTH) + 1;
 		            		year = cal.get(Calendar.YEAR);
 		            		return month < 10? "0" + Integer.toString(month) + "-" + Integer.toString(year) : Integer.toString(month) + "-" + Integer.toString(year);
 		            		
 		            	default:
-		            		info = null;
+		            		dateFormat = null;
 		            		return date;
 		            }
 		            
@@ -161,7 +161,7 @@ public class ConversionUtil {
 			try {
 				
 				if (type.equals(Date.class)) {
-					return parse((String) value);
+					return parseDate((String) value);
 				}
 				
 			} catch (Exception e) {
@@ -169,12 +169,12 @@ public class ConversionUtil {
 			}
 		}
 		
-		throw new QueryComposerException("Unable to convert value " + value.toString() + " of type " + value.getClass().getName() + " to type "
-				+ type.getName());
+		throw new QueryComposerException("Unable to convert value " + value.toString() + " of type " + value.getClass().getSimpleName() + " to type "
+				+ type.getSimpleName());
 	}
 	
-	public static String getRecentParse() {
-		return info;
+	public static String getRecentParseFormat() {
+		return dateFormat;
 	}
 	
 }
