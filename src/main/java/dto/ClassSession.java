@@ -37,7 +37,7 @@ public class ClassSession implements Comparable<ClassSession> {
 
 	@AssociationType(type="Course")
 	@OneToOne
-	@JoinColumn(name="course_id")
+	@JoinColumn(name="course_code")
 	private Course course;
 
 	@AssociationType(type="TimeTable")

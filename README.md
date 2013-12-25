@@ -7,10 +7,6 @@ This is a Third year project at BMSCE bangalore.
 
 Team members : 
 1. Amitabh Das
-2. Abhilash Upadhya
-3. Aashrith Shankar
-4. Jeevan Raghu
-
 
 Setting up the project :
 

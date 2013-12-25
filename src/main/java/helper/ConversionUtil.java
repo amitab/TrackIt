@@ -18,6 +18,38 @@ public class ConversionUtil {
 	
 	private static String dateFormat = "";
 	
+	public static String toReadable(String unreadable) {
+		final StringBuilder result = new StringBuilder();
+		String[] words = unreadable.split("(?=\\p{Upper})");
+		for(int i=0,l=words.length;i<l;++i) {
+		  if(i>0) result.append(" ");      
+		  result.append(Character.toUpperCase(words[i].charAt(0)))
+		        .append(words[i].substring(1));
+
+		}
+		
+		return result.toString();
+	}
+	
+	public static String fromReadable(String readable, boolean root) {
+		if(root) return readable;
+		
+		final StringBuilder result = new StringBuilder();
+		
+		String[] words = readable.split("\\s");
+		
+		for(int i=0,l=words.length;i<l;++i) {
+			if(i == 0) {
+				result.append(Character.toLowerCase(words[i].charAt(0)))
+		        .append(words[i].substring(1));
+			} else {
+				result.append(words[i]);
+			}
+		}
+		
+		return result.toString();
+	}
+	
 	public static Object parseDate(String d) throws Exception {
 		Date date;
 		if (d != null) {
@@ -172,6 +204,7 @@ public class ConversionUtil {
 		throw new QueryComposerException("Unable to convert value " + value.toString() + " of type " + value.getClass().getSimpleName() + " to type "
 				+ type.getSimpleName());
 	}
+	
 	
 	public static String getRecentParseFormat() {
 		return dateFormat;

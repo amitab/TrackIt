@@ -18,10 +18,18 @@ public class HibernateUtil {
 	}
 	
 	public static Session getSession() throws HibernateException {
-		return getSessionFactory().getCurrentSession();
+		if(session == null) {
+			throw new HibernateException("Session is not open yet!");
+		} else {
+			return session;
+		}
 	}
 	
 	public static void startTransaction() throws HibernateException {
+		if(session == null) {
+			throw new HibernateException("Session is not open yet!");
+		}
+		
 		transaction = session.beginTransaction();
 		transaction.setTimeout(5);
 	}
@@ -39,7 +47,8 @@ public class HibernateUtil {
 	}
 	
 	public static void closeSession() {
-		session.close();
+		if(session!=null)
+			session.close();
 		session = null;
 	}
 	

@@ -2,6 +2,7 @@ package dto;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,6 +11,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
@@ -29,6 +32,10 @@ public class Workshop {
 	
 	@Column(name="workshop_name")
 	private String workshopName;
+
+	@Column(name = "date", columnDefinition="DATE")
+	@Temporal(TemporalType.DATE)
+	private Date date;
 	
 	@AssociationType(type="Staff")
 	@ManyToMany(fetch = FetchType.LAZY, mappedBy = "workshopList")
@@ -58,4 +65,13 @@ public class Workshop {
 	public void setStaffList(Collection<Staff> staffList) {
 		this.staffList = staffList;
 	}
+
+	public Date getDate() {
+		return date;
+	}
+
+	public void setDate(Date date) {
+		this.date = date;
+	}
+	
 }

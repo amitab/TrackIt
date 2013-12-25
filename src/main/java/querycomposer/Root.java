@@ -5,9 +5,10 @@ import java.util.Set;
 
 import org.hibernate.Query;
 
+import helper.AbstractModelObject;
 import dao.HibernateUtil;
 
-public class Root {
+public class Root extends AbstractModelObject {
 	private String rootName;
 	private java.lang.Class<?> rootClass;
 	private Set<Attribute> attributeList = new HashSet<Attribute>();
@@ -41,7 +42,9 @@ public class Root {
 	}
 
 	public void setrootName(String rootName) {
+		String oldValue = this.rootName;
 		this.rootName = rootName;
+		firePropertyChange("name", oldValue, rootName);
 	}
 
 	public java.lang.Class<?> getRootClass() {
@@ -63,15 +66,19 @@ public class Root {
 	// Adding Attributes
 	
 	public Root addAttribute(Attribute attribute) throws QueryComposerException {
-		attribute.processAttribute(rootClass);
-		this.attributeList.add(attribute);
+		if(attribute!=null) {
+			attribute.processAttribute(rootClass);
+			this.attributeList.add(attribute);
+		}
 		return this;
 	}
 
 	public Root addAttributes(Attribute... attributes) throws QueryComposerException {
 		for(Attribute attribute : attributes) {
-			attribute.processAttribute(rootClass);
-			this.attributeList.add(attribute);
+			if(attribute!=null) {
+				attribute.processAttribute(rootClass);
+				this.attributeList.add(attribute);
+			}
 		}
 		return this;
 	}
@@ -108,11 +115,17 @@ public class Root {
 	}
 	
 	public Query prepareQuery() throws QueryComposerException {
-		Query query;
-		query = HibernateUtil.getSession().createQuery(generateHql());
-		
-		for(Attribute attribute : attributeList) {
-			attribute.prepareQuery(query);
+		Query query = null;
+		try {
+			
+			query = HibernateUtil.getSession().createQuery(generateHql());
+			
+			for(Attribute attribute : attributeList) {
+				attribute.prepareQuery(query);
+			}
+			
+		} catch (Exception e) {
+			throw new QueryComposerException(e.getMessage());
 		}
 		
 		return query;

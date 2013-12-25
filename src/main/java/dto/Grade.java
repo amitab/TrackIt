@@ -1,12 +1,13 @@
 package dto;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -42,14 +43,11 @@ public class Grade {
 	@OneToMany(fetch=FetchType.LAZY, cascade = {CascadeType.ALL}, mappedBy="grade")
     @Sort(type=SortType.NATURAL)
 	private SortedSet<TimeTable> timetableList = new TreeSet<TimeTable>();
-
-    @AssociationType(type="Staff")	
-	@OneToMany
-	@JoinTable(name="grade_staff", joinColumns=@JoinColumn(name="grade_id"),
-		inverseJoinColumns=@JoinColumn(name="staff_id")
-	)
-	private Collection<Staff> staffList = new ArrayList<Staff>();
 	
+    @ElementCollection
+    @JoinTable(name="grade_staff_incharge", joinColumns=@JoinColumn(name="grade_id"))
+    private Collection<GradeStaffIncharge> staffInchargeList = new HashSet<GradeStaffIncharge>();
+    
 	public int getGradeId() {
 		return gradeId;
 	}
@@ -82,12 +80,13 @@ public class Grade {
 		this.timetableList = timetableList;
 	}
 
-	public Collection<Staff> getStaffList() {
-		return staffList;
+	public Collection<GradeStaffIncharge> getStaffInchargeList() {
+		return staffInchargeList;
 	}
 
-	public void setStaffList(Collection<Staff> staffList) {
-		this.staffList = staffList;
+	public void setStaffInchargeList(
+			Collection<GradeStaffIncharge> staffInchargeList) {
+		this.staffInchargeList = staffInchargeList;
 	}
 	
 }

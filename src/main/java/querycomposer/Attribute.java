@@ -1,5 +1,6 @@
 package querycomposer;
 
+import helper.AbstractModelObject;
 import helper.ConversionUtil;
 
 import java.lang.annotation.Annotation;
@@ -14,7 +15,7 @@ import java.util.Set;
 
 import org.hibernate.Query;
 
-public class Attribute {
+public class Attribute extends AbstractModelObject {
 	public static final int OP_EQUAL = 0;
 	public static final int OP_NOT_EQUAL = 1;
 	public static final int OP_LESS_THAN = 2;
@@ -83,14 +84,23 @@ public class Attribute {
 	// Static Instantiators
 	
 	public static Attribute newInstance(String attributeName) {
+		if(attributeName == null || attributeName.equalsIgnoreCase(""))
+			return null;
+		
 		return new Attribute(attributeName);
 	}
 	
 	public static Attribute newInstance(String attributeName, String query) {
+		if(query == null || query.equalsIgnoreCase(""))
+			return null;
+		
 		return new Attribute(attributeName, query);
 	}
 
 	public static Attribute newInstance(String attributeName, String query, int operation) {
+		if(query == null || query.equalsIgnoreCase(""))
+			return null;
+		
 		return new Attribute(attributeName, query, operation);
 	}
 
@@ -105,7 +115,9 @@ public class Attribute {
 	}
 
 	public void setAttributeName(String attributeName) {
+		String oldValue = this.attributeName;
 		this.attributeName = attributeName;
+		firePropertyChange("name", oldValue, attributeName);
 	}
 
 	public java.lang.Class<?> getAttributeClass() {
@@ -191,7 +203,8 @@ public class Attribute {
 		if(!this.foreignKey) {
 			throw new QueryComposerException("The attribute '" + attributeName + "' cannot have attributes joined to it.");
 		}
-		this.attributeList.add(attribute);
+		if(attribute!=null)
+			this.attributeList.add(attribute);
 		return this;
 	}
 	
@@ -200,7 +213,8 @@ public class Attribute {
 			throw new QueryComposerException("The attribute '" + attributeName + "' cannot have attributes joined to it.");
 		}
 		for(Attribute attribute : attributes) {
-			this.attributeList.add(attribute);
+			if(attribute!=null)
+				this.attributeList.add(attribute);
 		}
 		return this;
 	}

@@ -82,6 +82,17 @@ public class TimeTable implements Comparable<TimeTable> {
 		this.classSessions = classSessions;
 	}
 	
+	public ClassSession getClassSessionByHour(Integer hour) {
+		ClassSession classSession = null;
+		for(ClassSession cs : classSessions) {
+			if(cs.getHour() == hour.intValue()) {
+				classSession = cs;
+				break;
+			}
+		}
+		return classSession;
+	}
+	
 	private int getDayValue(String dayName) {
 		int value = 0;
 		

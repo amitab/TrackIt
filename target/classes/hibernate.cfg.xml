@@ -35,12 +35,13 @@
 	    
 	    <mapping class="dto.Group"/>
 	    <mapping class="dto.Authentication"/>
-	    <mapping class="dto.Presentation"/>
+	    <mapping class="dto.Publication"/>
 	    <mapping class="dto.Grade"/>
 	    <mapping class="dto.TimeTable"/>
 	    <mapping class="dto.Course"/>
 	    <mapping class="dto.ClassSession"/>
 	    <mapping class="dto.Workshop"/>
+	    <mapping class="dto.ExternalLecture"/>
 	    <mapping class="dto.Staff"/>
 	    
     </session-factory>
