@@ -19,3 +19,5 @@ Change hibernate.connection.url value from jdbc:mysql://127.0.0.1:3306/reporter 
 
 Import the dummy data from the folder to your database.
 Try running the main program. If there are no errors, you are good to go!
+
+NOTE: You need to have eclipse window bulider.
